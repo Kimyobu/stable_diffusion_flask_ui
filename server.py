@@ -6,6 +6,7 @@ import torch
 from preview_decoder import ApproximateDecoder
 from io import BytesIO
 import base64
+import threading
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=int, help="Port to be bind server.")
@@ -55,7 +56,9 @@ def disconnect():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    with open("./index.html", encoding="utf-8") as f:
+        page = f.read()
+    return page
 
 
 socketio.run(app, debug=True, allow_unsafe_werkzeug=True, port=PORT)
