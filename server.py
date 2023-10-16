@@ -7,6 +7,7 @@ from preview_decoder import ApproximateDecoder
 from io import BytesIO
 import base64
 import threading
+import json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=int, help="Port to be bind server.")
@@ -19,7 +20,10 @@ MODEL = args.model
 app = Flask("Stable diffusion")
 socketio = SocketIO(app)
 
-pipe = diffusers.StableDiffusionPipeline.from_pretrained(MODEL)
+if torch.cuda.is_available() is False:
+    raise EnvironmentError("Cuda is Not Available")
+
+pipe = diffusers.StableDiffusionPipeline.from_pretrained(MODEL).to("cuda")
 ApproxDec = ApproximateDecoder.for_pipeline(pipeline=pipe)
 
 def image_to_data_uri(image):
@@ -41,6 +45,7 @@ def display_latents_callback(step: int, timestep: int, latents: torch.FloatTenso
 
 @socketio.on("gen")
 def gen(data):
+    print(f"Generate with: {json.dumps(data, indent=2)}")
     p = pipe(**data, callback=display_latents_callback)
     image = p.images[0]
     data_uri = image_to_data_uri(image)

@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Flask Socket.io Example</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
     <script>
-        window.addEventListener("load", function(ev) {
+        window.addEventListener("load", function (ev) {
             var socket = io.connect();
 
             let gen = document.getElementsByClassName("gen")
-            gen.onclick(function(ev) {
+            gen.onclick(function (ev) {
                 let prompt = document.getElementsByClassName("prompt")
                 let negative_prompt = document.getElementsByClassName("negative_prompt")
                 let steps = document.getElementsByClassName("stpes")
                 gen.disabled = true
-                socket.emit("gen", {prompt:prompt.value, negative_prompt:prompt.value, num_inference_steps:steps})
+                socket.emit("gen", {
+                    prompt: prompt.value,
+                    negative_prompt: negative_prompt.value,
+                    num_inference_steps: steps
+                })
             })
 
-            socket.on('pre', function(data_uri) {
+            socket.on('pre', function (data_uri) {
                 document.getElementById('pre').src = data_uri;
             });
 
-            socket.on("complete_gen", function(data_uri) {
+            socket.on("complete_gen", function (data_uri) {
                 document.getElementById('pre').src = data_uri;
             })
         })
@@ -48,10 +53,11 @@
         //     body.appendChild(v)
         // })
 
-        
-        
+
+
     </script>
 </head>
+
 <body>
     <div class="main">
         <div class="head">
@@ -71,4 +77,5 @@
         </div>
     </div>
 </body>
+
 </html>
