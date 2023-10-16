@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Socket.io Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <script>
+        window.addEventListener("load", function(ev) {
+            var socket = io.connect();
+
+            let gen = document.getElementsByClassName("gen")
+            gen.onclick(function(ev) {
+                let prompt = document.getElementsByClassName("prompt")
+                let negative_prompt = document.getElementsByClassName("negative_prompt")
+                let steps = document.getElementsByClassName("stpes")
+                gen.disabled = true
+                socket.emit("gen", {prompt:prompt.value, negative_prompt:prompt.value, num_inference_steps:steps})
+            })
+
+            socket.on('pre', function(data_uri) {
+                document.getElementById('pre').src = data_uri;
+            });
+
+            socket.on("complete_gen", function(data_uri) {
+                document.getElementById('pre').src = data_uri;
+            })
+        })
+
+        // var App = new class API {
+        //     create = document.createElement
+        //     objects = []
+        //     input(option = {}) {
+        //         let ob = this.create("input")
+        //         ob.id = option.id
+        //         ob.className = option.className
+        //         ob.style = option.style
+        //         let label = this.create("label")
+        //         label.textContent = option.label
+        //         label.className = option.label_class
+        //         label.id = option.label_id
+        //         this.objects.push(label, ob)
+        //     }
+        // }
+
+        // App.input()
+
+        // App.objects.forEach((v, i) => {
+        //     let body = document.getElementsByClassName("body")
+        //     body.appendChild(v)
+        // })
+
+        
+        
+    </script>
+</head>
+<body>
+    <div class="main">
+        <div class="head">
+            <h1>Stable Diffusion Diffusers</h1>
+        </div>
+        <div class="body">
+            <label>Prompt</label>
+            <input type="text" class="prompt" placeholder="Write your mind here...">
+            <label>Negative Prompt</label>
+            <input type="text" class="negative_prompt" placeholder="Write your mind here...">
+            <label>Steps</label>
+            <input type="number" value="50">
+            <button class="gen">Generate</button>
+        </div>
+        <div class="foot">
+            <img id="pre" src="">
+        </div>
+    </div>
+</body>
+</html>
