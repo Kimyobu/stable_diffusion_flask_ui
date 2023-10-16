@@ -9,14 +9,16 @@ import base64
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=int, help="Port to be bind server.")
+parser.add_argument("--model", type=str)
 
 args = parser.parse_args()
 PORT = args.port
+MODEL = args.model
 
 app = Flask("Stable diffusion")
 socketio = SocketIO(app)
 
-pipe = diffusers.StableDiffusionPipeline.from_pretrained()
+pipe = diffusers.StableDiffusionPipeline.from_pretrained(MODEL)
 ApproxDec = ApproximateDecoder.for_pipeline(pipeline=pipe)
 
 def image_to_data_uri(image):
